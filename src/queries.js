@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const db = require("./postgres-config");
+const db = require("../postgres-config");
 
 const getAllUsers = (req, res) => {
     db.pool.query("SELECT * FROM users ORDER BY id ASC", (err, result) => {
