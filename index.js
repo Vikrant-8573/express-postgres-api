@@ -22,6 +22,7 @@ app.post("/users/login", userController.validateUser);
 
 app.post("/diary", diaryController.createDiaryEntry);
 app.get("/diary/:id", diaryController.getDiaryEntry);
+app.get("/diary", diaryController.getAllDiaryEntries);
 app.put("/diary/:id", diaryController.updateDiaryEntry);
 app.delete("/diary/:id", diaryController.deleteDiaryEntry);
 
