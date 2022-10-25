@@ -1,8 +1,13 @@
 const bcrypt = require("bcrypt");
 const db = require("../postgres-config");
 
+/**
+ * Get all users
+ * @param req the request
+ * @param res the response
+ */
 const getAllUsers = (req, res) => {
-    db.pool.query("SELECT * FROM users ORDER BY id ASC", (err, result) => {
+    db.pool.query("SELECT * FROM users ORDER BY id ASC;", (err, result) => {
         if (err) {
             throw err;
         }
@@ -11,6 +16,11 @@ const getAllUsers = (req, res) => {
     });
 }
 
+/**
+ * Get a particular user by their email
+ * @param req the request
+ * @param res the response
+ */
 const getUserByEmail = (req, res) => {
     const email = req.params.email;
 
@@ -23,6 +33,11 @@ const getUserByEmail = (req, res) => {
     });
 }
 
+/**
+ * Create a new user
+ * @param req the request
+ * @param res the response
+ */
 const createUser = async (req, res) => {
     const { email, password } = req.body;
 
@@ -37,6 +52,11 @@ const createUser = async (req, res) => {
     });
 }
 
+/**
+ * Update a user's email and/or password
+ * @param req the request
+ * @param res the response
+ */
 const updateUser = async (req, res) => {
     const id = parseInt(req.params.id);
 
@@ -61,6 +81,11 @@ const updateUser = async (req, res) => {
     }
 }
 
+/**
+ * Delete a user with a given id
+ * @param req the request
+ * @param res the response
+ */
 const deleteUser = (req, res) => {
     const id = parseInt(req.params.id);
 
@@ -73,6 +98,11 @@ const deleteUser = (req, res) => {
     });
 }
 
+/**
+ * Validate a user by their password. This function can be used for signing in.
+ * @param {*} req the request
+ * @param {*} res the response
+ */
 const validateUser = (req, res) => {
     const { email, password } = req.body;
 
