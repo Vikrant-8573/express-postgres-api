@@ -41,15 +41,24 @@ const getUserByEmail = (req, res) => {
 const createUser = async (req, res) => {
     const { email, password } = req.body;
 
-    const passwordHash = await bcrypt.hash(password, 5);
+    const userExists = await checkUserExists(email);
 
-    db.pool.query("INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *;", [email, passwordHash], (err, result) => {
-        if (err) {
-            throw err;
-        }
+    console.log(userExists);
 
-        res.status(201).send(`User added with ID: ${result.rows[0].id}`);
-    });
+    if (!userExists) {
+        const passwordHash = await bcrypt.hash(password, 5);
+    
+        db.pool.query("INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *;", [email, passwordHash], (err, result) => {
+            if (err) {
+                throw err;
+            }
+    
+            res.status(201).send(`User added with ID: ${result.rows[0].id}`);
+        });
+    } else {
+        res.status(400).send("User with this email already exists. Use a different email address.");
+    }
+    
 }
 
 /**
@@ -125,6 +134,27 @@ const validateUser = (req, res) => {
             return res.status(404).send("Email not found!");
         }
     });
+}
+
+/**
+ * Checks if a user with the provided email id already exists.
+ * @param {String} userEmail email of a user
+ * @returns {Promise<Boolean>}
+ */
+const checkUserExists = async (userEmail) => {
+    try {
+        let result = await db.pool.query("SELECT * FROM users WHERE email = $1;", [userEmail]);
+
+        let allUsers = result.rows;
+
+        if (allUsers.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (err) {
+        console.error(err)
+    }
 }
 
 module.exports = {
